@@ -8,15 +8,19 @@ using ABI_RC.Systems.IK.SubSystems;
 using ABI_RC.Systems.MovementSystem;
 using ABI_RC.Core.Util.AssetFiltering;
 using System.Linq;
+using BepInEx;
 
+/*
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: MelonInfo(typeof(Koneko.LimbGrabber), "CVRLimbsGrabber", "1.1.0", "Exterrata")]
 [assembly: MelonAdditionalDependencies("DesktopVRSwitch")]
 [assembly: MelonOptionalDependencies("PlayerRagdollMod")]
 [assembly: HarmonyDontPatchAll]
+*/
 
 namespace Koneko;
-public class LimbGrabber : MelonMod
+[BepInPlugin("CVRLimbsGrabber", "CVRLimbsGrabber", "1.1.0")]
+public class LimbGrabber : HybridMod
 {
     public static readonly MelonPreferences_Category Category = MelonPreferences.CreateCategory("LimbGrabber");
     public static readonly MelonPreferences_Entry<bool> Enabled = Category.CreateEntry<bool>("Enabled", true);
@@ -90,6 +94,7 @@ public class LimbGrabber : MelonMod
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
     {
+        Logger.LogInfo("OnSceneWasInitialized was called");
         if (buildIndex == 3)
         {
             Limbs = new Limb[6];
@@ -113,12 +118,14 @@ public class LimbGrabber : MelonMod
                 Limbs[i].Target = limb;
                 limb.parent = PlayerLocal;
             }
-            if (RegisteredMelons.Any(it => it.Info.Name == "PlayerRagdollMod"))
+            //if (RegisteredMelons.Any(it => it.Info.Name == "PlayerRagdollMod"))
+            if(AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "ml_prm"))
             {
                 RagdollSupport.Initialize();
                 PrmExists = true;
             }
-            if (RegisteredMelons.Any(it => it.Info.Name == "BTKUILib"))
+            //if (RegisteredMelons.Any(it => it.Info.Name == "BTKUILib"))
+            if (AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "BTKUILib"))
             {
                 BTKUISupport.Initialize();
                 BTKExists = true;
