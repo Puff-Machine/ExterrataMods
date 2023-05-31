@@ -25,6 +25,7 @@ internal class BTKUISupport
         AddToggle(ref settingCatagory, LimbGrabber.EnablePose);
         AddToggle(ref settingCatagory, LimbGrabber.PreserveMomentum);
         AddToggle(ref settingCatagory, LimbGrabber.RagdollRelease);
+        AddSlider(ref settingPage, LimbGrabber.MinRagdollSpeed, 0, 10);
         AddSlider(ref settingPage, LimbGrabber.VelocityMultiplier, 0.1f, 100, 1);
         AddSlider(ref settingPage, LimbGrabber.GravityMultiplier, 0, 100, 1);
         AddSlider(ref settingPage, LimbGrabber.Distance, 0.01f, 1);

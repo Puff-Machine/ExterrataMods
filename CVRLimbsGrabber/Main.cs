@@ -19,24 +19,26 @@ using BepInEx;
 */
 
 namespace Koneko;
+[BepInDependency("BTKUILib")]
 [BepInPlugin("CVRLimbsGrabber", "CVRLimbsGrabber", "1.1.0")]
 public class LimbGrabber : HybridMod
 {
     public static readonly MelonPreferences_Category Category = MelonPreferences.CreateCategory("LimbGrabber");
-    public static readonly MelonPreferences_Entry<bool> Enabled = Category.CreateEntry<bool>("Enabled", true);
-    public static readonly MelonPreferences_Entry<bool> EnableHands = Category.CreateEntry<bool>("EnableHands", true);
-    public static readonly MelonPreferences_Entry<bool> EnableFeet = Category.CreateEntry<bool>("EnableFeet", true);
-    public static readonly MelonPreferences_Entry<bool> EnableHead = Category.CreateEntry<bool>("EnableHead", true);
-    public static readonly MelonPreferences_Entry<bool> EnableHip = Category.CreateEntry<bool>("EnableHip", true);
-    public static readonly MelonPreferences_Entry<bool> EnableRoot = Category.CreateEntry<bool>("EnableRoot", true);
-    public static readonly MelonPreferences_Entry<bool> EnablePose = Category.CreateEntry<bool>("EnablePosing", true);
-    public static readonly MelonPreferences_Entry<bool> PreserveMomentum = Category.CreateEntry<bool>("PreserveMomentum", true);
-    public static readonly MelonPreferences_Entry<bool> Friend = Category.CreateEntry<bool>("FriendsOnly", true);
-    public static readonly MelonPreferences_Entry<bool> RagdollRelease = Category.CreateEntry<bool>("RagdollOnRelease", true);
+    public static readonly MelonPreferences_Entry<bool> Enabled = Category.CreateEntry<bool>("Enabled", true, description: "Enable LimbGrabber");
+    public static readonly MelonPreferences_Entry<bool> EnableHands = Category.CreateEntry<bool>("EnableHands", true, "Enable Hands", "Allow your hands to be grabbed");
+    public static readonly MelonPreferences_Entry<bool> EnableFeet = Category.CreateEntry<bool>("EnableFeet", true, "Enable Feet", "Allow your feet to be grabbed");
+    public static readonly MelonPreferences_Entry<bool> EnableHead = Category.CreateEntry<bool>("EnableHead", true, "Enable Head", "Allow your head to be grabbed");
+    public static readonly MelonPreferences_Entry<bool> EnableHip = Category.CreateEntry<bool>("EnableHip", true, "Enable Hip", "Allow your hip to be grabbed");
+    public static readonly MelonPreferences_Entry<bool> EnableRoot = Category.CreateEntry<bool>("EnableRoot", true, "Enable Root", "Allow your entire body to be grabbed from the root");
+    public static readonly MelonPreferences_Entry<bool> EnablePose = Category.CreateEntry<bool>("EnablePosing", true, "Enable Posing", "Allow posing bones in place");
+    public static readonly MelonPreferences_Entry<bool> PreserveMomentum = Category.CreateEntry<bool>("PreserveMomentum", true, "Preserve Momentum", "Keep your velocity when thrown by the root");
+    public static readonly MelonPreferences_Entry<bool> Friend = Category.CreateEntry<bool>("FriendsOnly", true, "Friends Only", "Only allow friends to grab you");
+    public static readonly MelonPreferences_Entry<bool> RagdollRelease = Category.CreateEntry<bool>("RagdollOnRelease", true, "Ragdoll", "Ragdoll when your root bone is released");
     public static readonly MelonPreferences_Entry<bool> Debug = Category.CreateEntry<bool>("Debug", false);
-    public static readonly MelonPreferences_Entry<float> VelocityMultiplier = Category.CreateEntry<float>("VelocityMultiplier", 1f);
-    public static readonly MelonPreferences_Entry<float> GravityMultiplier = Category.CreateEntry<float>("GravityMultiplier", 1f);
-    public static readonly MelonPreferences_Entry<float> Distance = Category.CreateEntry<float>("Distance", 0.15f);
+    public static readonly MelonPreferences_Entry<float> VelocityMultiplier = Category.CreateEntry<float>("VelocityMultiplier", 1f, "Velocity Multiplier", "Multiply your velocity when thrown");
+    public static readonly MelonPreferences_Entry<float> GravityMultiplier = Category.CreateEntry<float>("GravityMultiplier", 1f, "Gravity Multiplier", "Multiply your gravity when thrown");
+    public static readonly MelonPreferences_Entry<float> Distance = Category.CreateEntry<float>("Distance", 0.15f, "Grab Distance", "From how far away should each point be grabbable");
+    public static readonly MelonPreferences_Entry<float> MinRagdollSpeed = Category.CreateEntry<float>("MinRagdollSpeed", 0f, "Minimum Ragdoll Speed", "Only ragdoll when thrown faster than this speed");
 
     public static MelonPreferences_Entry<bool>[] enabled;
     public static bool[] tracking;
@@ -239,6 +241,7 @@ public class LimbGrabber : HybridMod
         {
             if (grabber.transform != RootParent) return;
             if (Debug.Value) MelonLogger.Msg("limb " + Neck.name + " was released by " + grabber.transform.name);
+            bool velocityCanRagdoll = true;
             if (!PreserveMomentum.Value) MovementSystem.Instance.canMove = true;
             else
             {
@@ -248,13 +251,14 @@ public class LimbGrabber : HybridMod
                     Velocity += AverageVelocities[i];
                 }
                 Velocity /= AverageVelocities.Length;
+                if(Velocity.magnitude < MinRagdollSpeed.Value) velocityCanRagdoll = false;
                 Velocity *= VelocityMultiplier.Value * 100;
                 Root.transform.position = PlayerLocal.transform.position + new Vector3(0, 0.1f, 0);
                 Root.isKinematic = false;
                 Root.velocity = Velocity;
             }
             RootGrabbed = false;
-            if (PrmExists && RagdollRelease.Value) RagdollSupport.ToggleRagdoll();
+            if (PrmExists && RagdollRelease.Value && velocityCanRagdoll) RagdollSupport.ToggleRagdoll();
             return;
         }
         if (grabber.transform != Limbs[limb].Parent) return;
@@ -328,6 +332,11 @@ public class LimbGrabber : HybridMod
 
     public static void StopFall()
     {
+        if(Root is null)
+        {
+            MelonDebug.Msg("Preventing error in StopFall");
+            return;
+        }
         Root.isKinematic = true;
         IsAirborn = false;
         MovementSystem.Instance.canMove = true;
