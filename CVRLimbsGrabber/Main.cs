@@ -37,8 +37,8 @@ public class LimbGrabber : HybridMod
     public static readonly MelonPreferences_Entry<bool> Debug = Category.CreateEntry<bool>("Debug", false);
     public static readonly MelonPreferences_Entry<float> VelocityMultiplier = Category.CreateEntry<float>("VelocityMultiplier", 1f, "Velocity Multiplier", "Multiply your velocity when thrown");
     public static readonly MelonPreferences_Entry<float> GravityMultiplier = Category.CreateEntry<float>("GravityMultiplier", 1f, "Gravity Multiplier", "Multiply your gravity when thrown");
-    public static readonly MelonPreferences_Entry<float> Distance = Category.CreateEntry<float>("Distance", 0.15f, "Grab Distance", "From how far away should each point be grabbable");
-    public static readonly MelonPreferences_Entry<float> MinRagdollSpeed = Category.CreateEntry<float>("MinRagdollSpeed", 0f, "Minimum Ragdoll Speed", "Only ragdoll when thrown faster than this speed");
+    public static readonly MelonPreferences_Entry<float> Distance = Category.CreateEntry<float>("GrabDistance", 0.15f, "Grab Distance", "From how far away should each point be grabbable");
+    public static readonly MelonPreferences_Entry<float> MinRagdollSpeed = Category.CreateEntry<float>("MinRagdollSpeed", 0.2f, "Minimum Ragdoll Speed", "Only ragdoll when thrown faster than this speed");
 
     public static MelonPreferences_Entry<bool>[] enabled;
     public static bool[] tracking;
@@ -83,15 +83,17 @@ public class LimbGrabber : HybridMod
             EnableHip,
             EnableRoot
         };
-        HarmonyInstance.PatchAll(typeof(Patches));
+        try {
+            HarmonyInstance.PatchAll(typeof(Patches));
+        } catch(Exception e) { 
+            MelonLogger.Error(e);
+        }
 
         var propWhitelist = Traverse.Create(typeof(SharedFilter)).Field<HashSet<Type>>("_spawnableWhitelist").Value;
         propWhitelist.Add(typeof(GrabberComponent));
 
         var avatarWhitelist = Traverse.Create(typeof(SharedFilter)).Field<HashSet<Type>>("_avatarWhitelist").Value;
         avatarWhitelist.Add(typeof(GrabberComponent));
-
-        MovementSystem.OnPlayerTeleported.AddListener(StopFall);
     }
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -132,6 +134,7 @@ public class LimbGrabber : HybridMod
                 BTKUISupport.Initialize();
                 BTKExists = true;
             }
+            MovementSystem.OnPlayerTeleported.AddListener(StopFall);
         }
     }
 
@@ -164,7 +167,7 @@ public class LimbGrabber : HybridMod
             {
                 if (PreserveMomentum.Value)
                 {
-                    Root.velocity = Root.velocity + (new Vector3(0, -MovementSystem.Instance.gravity, 0) * 0.01f * Time.deltaTime * GravityMultiplier.Value);
+                    Root.velocity = Root.velocity + (new Vector3(0, -MovementSystem.Instance.gravity, 0) * Time.deltaTime * GravityMultiplier.Value);
                     PlayerLocal.position = Root.transform.position + new Vector3(0, -0.1f, 0);
                 }
                 if (Physics.CheckSphere(PlayerLocal.position, 0.11f, MovementSystem.Instance.groundMask, QueryTriggerInteraction.Ignore) || MovementSystem.Instance.flying)
@@ -241,7 +244,6 @@ public class LimbGrabber : HybridMod
         {
             if (grabber.transform != RootParent) return;
             if (Debug.Value) MelonLogger.Msg("limb " + Neck.name + " was released by " + grabber.transform.name);
-            bool velocityCanRagdoll = true;
             if (!PreserveMomentum.Value) MovementSystem.Instance.canMove = true;
             else
             {
@@ -251,14 +253,13 @@ public class LimbGrabber : HybridMod
                     Velocity += AverageVelocities[i];
                 }
                 Velocity /= AverageVelocities.Length;
-                if(Velocity.magnitude < MinRagdollSpeed.Value) velocityCanRagdoll = false;
                 Velocity *= VelocityMultiplier.Value * 100;
                 Root.transform.position = PlayerLocal.transform.position + new Vector3(0, 0.1f, 0);
                 Root.isKinematic = false;
                 Root.velocity = Velocity;
             }
             RootGrabbed = false;
-            if (PrmExists && RagdollRelease.Value && velocityCanRagdoll) RagdollSupport.ToggleRagdoll();
+            if (PrmExists && RagdollRelease.Value && Root.velocity.magnitude > MinRagdollSpeed.Value) RagdollSupport.ToggleRagdoll();
             return;
         }
         if (grabber.transform != Limbs[limb].Parent) return;
