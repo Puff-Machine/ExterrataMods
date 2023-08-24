@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <None Remove="Icons\Cords.png" />
+    <None Remove="Icons\Horizon.png" />
+    <None Remove="Icons\ResetRotation.png" />
+    <None Remove="Icons\Tracking.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Cords.png" />
+    <EmbeddedResource Include="Icons\Horizon.png" />
+    <EmbeddedResource Include="Icons\ResetRotation.png" />
+    <EmbeddedResource Include="Icons\Tracking.png" />
+  </ItemGroup>
+
+</Project>

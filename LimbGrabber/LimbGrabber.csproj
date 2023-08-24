@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <Compile Remove="LimbGrabberUnity\**" />
+    <EmbeddedResource Remove="LimbGrabberUnity\**" />
+    <None Remove="LimbGrabberUnity\**" />
+  </ItemGroup>
+
+</Project>

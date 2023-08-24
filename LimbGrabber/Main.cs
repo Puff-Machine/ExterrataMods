@@ -12,9 +12,9 @@ using BepInEx;
 
 /*
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
-[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "CVRLimbsGrabber", "1.1.0", "Exterrata")]
-[assembly: MelonAdditionalDependencies("DesktopVRSwitch")]
-[assembly: MelonOptionalDependencies("PlayerRagdollMod")]
+[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.1.2", "Exterrata")]
+[assembly: MelonAdditionalDependencies("DesktopVRIK")]
+[assembly: MelonOptionalDependencies("ml_prm", "BTKUILib")]
 [assembly: HarmonyDontPatchAll]
 */
 
@@ -183,7 +183,7 @@ public class LimbGrabber : HybridMod
 
     public static void Grab(GrabberComponent grabber)
     {
-        if (!Enabled.Value || BodySystem.isCalibrating) return;
+        if (!Enabled.Value || !Initialized || BodySystem.isCalibrating) return;
         if (Debug.Value) MelonLogger.Msg("grab was detected");
         int closest = 0;
         float distance = float.PositiveInfinity;
@@ -228,7 +228,11 @@ public class LimbGrabber : HybridMod
     {
         int limb = grabber.Limb;
         if (limb == -1) return;
-        if (limb == 6 || !EnablePose.Value) Release(grabber);
+        if (limb == 6 || !EnablePose.Value || !Initialized)
+        {
+            Release(grabber);
+            return;
+        }
         grabber.Limb = -1;
         if (grabber.transform != Limbs[limb].Parent) return;
         if (Debug.Value) MelonLogger.Msg("limb " + Limbs[limb].limb.name + " was posed by " + grabber.transform.name);
