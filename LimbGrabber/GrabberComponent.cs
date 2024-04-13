@@ -20,24 +20,24 @@ public class GrabberComponent : MonoBehaviour
         int gesture = 0;
         if (grabber == 0) gesture = Grab ? 1 : 0;
         else if (!Friends.FriendsWith(PlayerDescriptor.ownerId) && LimbGrabber.Friend.Value) return;
-        else if (grabber == 1) { 
-            if((int)MovementData.AnimatorGestureLeft == 1 || MovementData.LeftMiddleCurl > 0.5 && MovementData.LeftThumbCurl > 0.5) gesture = 1; 
-            else if((int)MovementData.AnimatorGestureLeft == 2 || MovementData.LeftMiddleCurl > 0.5 && MovementData.LeftThumbCurl < 0.5) gesture = 2;
+        else if (grabber == 1) {
+            if((int)MovementData.AnimatorGestureLeft == 1 || MovementData.LeftMiddle1Stretched < -0.2 && MovementData.LeftThumb1Stretched < -0.2) gesture = 1; 
+            else if((int)MovementData.AnimatorGestureLeft == 2 || MovementData.LeftMiddle1Stretched < -0.2 && MovementData.LeftThumb1Stretched > 0.2) gesture = 2;
         }
         else if (grabber == 2) { 
-            if((int)MovementData.AnimatorGestureRight == 1 || MovementData.RightMiddleCurl > 0.5 && MovementData.RightThumbCurl > 0.5) gesture = 1;
-            else if((int)MovementData.AnimatorGestureRight == 2 || MovementData.RightMiddleCurl > 0.5 && MovementData.RightThumbCurl < 0.5) gesture = 2;
+            if((int)MovementData.AnimatorGestureRight == 1 || MovementData.RightMiddle1Stretched < -0.2 && MovementData.RightThumb1Stretched < -0.2) gesture = 1;
+            else if((int)MovementData.AnimatorGestureRight == 2 || MovementData.RightMiddle1Stretched < -0.2 && MovementData.RightThumb1Stretched > 0.2) gesture = 2;
         }
 
-        if (gesture == 1 && Gesture != 1)
+        if (gesture == 1 && Gesture != 1) // fist
         {
-            LimbGrabber.Grab(this);
+            LimbGrabber.Grab(this); 
         }
         if (gesture == 0 && Gesture == 1)
         {
             LimbGrabber.Release(this);
         }
-        if (gesture == 2 && Gesture != 2)
+        if (gesture == 2 && Gesture != 2) // thumbs up
         {
             LimbGrabber.Pose(this);
         }

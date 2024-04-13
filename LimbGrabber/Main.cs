@@ -5,7 +5,7 @@ using MelonLoader;
 using HarmonyLib;
 using RootMotion.FinalIK;
 using ABI_RC.Systems.IK.SubSystems;
-using ABI_RC.Systems.MovementSystem;
+using ABI_RC.Systems.Movement;
 using ABI_RC.Core.Util.AssetFiltering;
 using System.Linq;
 using BepInEx;
@@ -34,7 +34,7 @@ public class LimbGrabber : HybridMod
     public static readonly MelonPreferences_Entry<bool> PreserveMomentum = Category.CreateEntry<bool>("PreserveMomentum", true, "Preserve Momentum", "Keep your velocity when thrown by the root");
     public static readonly MelonPreferences_Entry<bool> Friend = Category.CreateEntry<bool>("FriendsOnly", true, "Friends Only", "Only allow friends to grab you");
     public static readonly MelonPreferences_Entry<bool> RagdollRelease = Category.CreateEntry<bool>("RagdollOnRelease", true, "Ragdoll", "Ragdoll when your root bone is released");
-    public static readonly MelonPreferences_Entry<bool> Debug = Category.CreateEntry<bool>("Debug", false);
+    public static readonly MelonPreferences_Entry<bool> Debug = Category.CreateEntry<bool>("Debug", false, "Debug", "Enable additional logging");
     public static readonly MelonPreferences_Entry<float> VelocityMultiplier = Category.CreateEntry<float>("VelocityMultiplier", 1f, "Velocity Multiplier", "Multiply your velocity when thrown");
     public static readonly MelonPreferences_Entry<float> GravityMultiplier = Category.CreateEntry<float>("GravityMultiplier", 1f, "Gravity Multiplier", "Multiply your gravity when thrown");
     public static readonly MelonPreferences_Entry<float> Distance = Category.CreateEntry<float>("GrabDistance", 0.15f, "Grab Distance", "From how far away should each point be grabbable");
@@ -55,6 +55,7 @@ public class LimbGrabber : HybridMod
     public static IKSolverVR IKSolver;
     public static bool Initialized;
     public static bool IsAirborn;
+    public static bool WasRagdolled;
     public static bool PrmExists;
     public static bool BTKExists;
 
@@ -107,9 +108,9 @@ public class LimbGrabber : HybridMod
             UnityEngine.Object.DontDestroyOnLoad(root);
             var col = root.AddComponent<SphereCollider>();
             Root = root.AddComponent<Rigidbody>();
-            MovementSystem.Instance.RemovePlayerCollision(col);
-            Physics.IgnoreCollision(MovementSystem.Instance.controller, col);
-            Physics.IgnoreCollision(MovementSystem.Instance.holoPortController, col);
+            BetterBetterCharacterController.Instance.RemovePlayerCollision(col);
+            //Physics.IgnoreCollision(MovementSystem.Instance.controller, col);
+            //Physics.IgnoreCollision(MovementSystem.Instance.holoPortController, col);
             root.layer = 8;
             col.radius = 0.1f;
             Root.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
@@ -134,7 +135,7 @@ public class LimbGrabber : HybridMod
                 BTKUISupport.Initialize();
                 BTKExists = true;
             }
-            MovementSystem.OnPlayerTeleported.AddListener(StopFall);
+            //BetterBetterCharacterController.OnTeleport.AddListener(StopFall);
         }
     }
 
@@ -150,7 +151,7 @@ public class LimbGrabber : HybridMod
                 Limbs[i].Target.rotation = Limbs[i].Parent.rotation * Limbs[i].RotationOffset;
             }
         }
-        if (EnableRoot.Value && Neck != null && MovementSystem.Instance.canFly)
+        if (EnableRoot.Value && Neck != null && BetterBetterCharacterController.Instance.FlightAllowedInWorld)
         {
             if (PreserveMomentum.Value)
             {
@@ -167,15 +168,15 @@ public class LimbGrabber : HybridMod
             {
                 if (PreserveMomentum.Value)
                 {
-                    Root.velocity = Root.velocity + (new Vector3(0, -MovementSystem.Instance.gravity, 0) * Time.deltaTime * GravityMultiplier.Value);
+                    Root.velocity = Root.velocity + (BetterBetterCharacterController.Instance.gravity * Time.deltaTime * GravityMultiplier.Value);
                     PlayerLocal.position = Root.transform.position + new Vector3(0, -0.1f, 0);
                 }
-                if (Physics.CheckSphere(PlayerLocal.position, 0.11f, MovementSystem.Instance.groundMask, QueryTriggerInteraction.Ignore) || MovementSystem.Instance.flying)
+                if (Physics.CheckSphere(PlayerLocal.position, 0.11f, BetterBetterCharacterController.Instance.characterMovement.collisionLayers /*MovementSystem.Instance.groundMask*/, QueryTriggerInteraction.Ignore) || BetterBetterCharacterController.Instance.IsFlying())
                 {
                     if (Debug.Value) MelonLogger.Msg("Landed");
                     Root.isKinematic = true;
                     IsAirborn = false;
-                    MovementSystem.Instance.canMove = true;
+                    if (WasRagdolled == false) BetterBetterCharacterController.Instance.SetImmobilized(false);
                 }
             }
         }
@@ -203,14 +204,16 @@ public class LimbGrabber : HybridMod
             if (!enabled[closest].Value) return;
             if (closest == 6)
             {
-                if (!MovementSystem.Instance.canFly) return;
+                if (!BetterBetterCharacterController.Instance.FlightAllowedInWorld) return;
                 grabber.Limb = closest;
                 if (Debug.Value) MelonLogger.Msg("limb " + Neck.name + " was grabbed by " + grabber.transform.name);
                 RootOffset = PlayerLocal.position - grabber.transform.position;
                 RootParent = grabber.transform;
-                MovementSystem.Instance.canMove = false;
+                //MovementSystem.Instance.canMove = false;
+                BetterBetterCharacterController.Instance.SetImmobilized(true);
                 RootGrabbed = true;
                 IsAirborn = true;
+                WasRagdolled = false;
                 return;
             }
             grabber.Limb = closest;
@@ -248,7 +251,7 @@ public class LimbGrabber : HybridMod
         {
             if (grabber.transform != RootParent) return;
             if (Debug.Value) MelonLogger.Msg("limb " + Neck.name + " was released by " + grabber.transform.name);
-            if (!PreserveMomentum.Value) MovementSystem.Instance.canMove = true;
+            if (!PreserveMomentum.Value) BetterBetterCharacterController.Instance.SetImmobilized(false); //MovementSystem.Instance.canMove = true;
             else
             {
                 Vector3 Velocity = Vector3.zero;
@@ -263,7 +266,11 @@ public class LimbGrabber : HybridMod
                 Root.velocity = Velocity;
             }
             RootGrabbed = false;
-            if (PrmExists && RagdollRelease.Value && Root.velocity.magnitude > MinRagdollSpeed.Value) RagdollSupport.ToggleRagdoll();
+            if (PrmExists && RagdollRelease.Value && Root.velocity.magnitude > MinRagdollSpeed.Value)
+            {
+                RagdollSupport.ToggleRagdoll();
+                WasRagdolled = true;
+            }
             return;
         }
         if (grabber.transform != Limbs[limb].Parent) return;
@@ -335,7 +342,7 @@ public class LimbGrabber : HybridMod
         }
     }
 
-    public static void StopFall()
+    public static void StopFall(BetterBetterCharacterController.PlayerMoveOffset _)
     {
         if(Root is null)
         {
@@ -344,6 +351,6 @@ public class LimbGrabber : HybridMod
         }
         Root.isKinematic = true;
         IsAirborn = false;
-        MovementSystem.Instance.canMove = true;
+        BetterBetterCharacterController.Instance.SetImmobilized(false);
     }
 }

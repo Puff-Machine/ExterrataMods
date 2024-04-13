@@ -84,6 +84,9 @@
 		<Reference Include="BTKUILib">
 			<HintPath>$(CVRPATH)\BepInEx\plugins\BTKUILib.dll</HintPath>
 		</Reference>
+        <Reference Include="ECM2">
+            <HintPath>$(CVRPATH)\ChilloutVR_Data\Managed\ECM2.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>
