@@ -1,5 +1,6 @@
 ﻿using BTKUILib;
 using BTKUILib.UIObjects;
+using BTKUILib.UIObjects.Components;
 using MelonLoader;
 using System;
 
@@ -24,8 +25,8 @@ internal class BTKUISupport
         AddToggle(ref settingCatagory, LimbGrabber.Friend);
         AddToggle(ref settingCatagory, LimbGrabber.EnablePose);
         AddToggle(ref settingCatagory, LimbGrabber.PreserveMomentum);
-        AddToggle(ref settingCatagory, LimbGrabber.RagdollRelease);
-        AddSlider(ref settingPage, LimbGrabber.MinRagdollSpeed, 0, 10);
+        AddToggle(ref settingCatagory, LimbGrabber.RagdollRelease).Disabled = !LimbGrabber.PrmExists;
+        AddSlider(ref settingPage, LimbGrabber.MinRagdollSpeed, 0, 10).Disabled = !LimbGrabber.PrmExists;
         AddSlider(ref settingPage, LimbGrabber.VelocityMultiplier, 0.1f, 100, 1);
         AddSlider(ref settingPage, LimbGrabber.GravityMultiplier, 0, 100, 1);
         AddSlider(ref settingPage, LimbGrabber.Distance, 0.01f, 1);
@@ -34,13 +35,17 @@ internal class BTKUISupport
         mainCatagory.AddButton("Release All", "", "Release All").OnPress += new Action(() => LimbGrabber.ReleaseAll());
     }
 
-    private static void AddToggle(ref Category category, MelonPreferences_Entry<bool> entry)
+    private static ToggleButton AddToggle(ref Category category, MelonPreferences_Entry<bool> entry)
     {
-        category.AddToggle(entry.DisplayName, entry.Description, entry.Value).OnValueUpdated += b => entry.Value = b;
+        var toggle = category.AddToggle(entry.DisplayName, entry.Description, entry.Value);
+        toggle.OnValueUpdated += b => entry.Value = b;
+        return toggle;
     }
 
-    private static void AddSlider(ref Page page, MelonPreferences_Entry<float> entry, float min, float max, int decimalPlaces = 2)
+    private static SliderFloat AddSlider(ref Page page, MelonPreferences_Entry<float> entry, float min, float max, int decimalPlaces = 2)
     {
-        page.AddSlider(entry.DisplayName, entry.Description, entry.Value, min, max, decimalPlaces).OnValueUpdated += f => entry.Value = f;
+        var slider = page.AddSlider(entry.DisplayName, entry.Description, entry.Value, min, max, decimalPlaces);
+        slider.OnValueUpdated += f => entry.Value = f;
+        return slider;
     }
 }

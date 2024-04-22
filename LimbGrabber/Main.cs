@@ -106,7 +106,7 @@ public class LimbGrabber : MelonMod
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
     {
-        MelonLogger.Msg("OnSceneWasInitialized was called");
+        MelonLogger.Msg($"OnSceneWasInitialized was called, buildIndex={buildIndex}");
         if (buildIndex == 3)
         {
             Limbs = new Limb[6];
