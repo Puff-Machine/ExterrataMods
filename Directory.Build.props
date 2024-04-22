@@ -11,6 +11,7 @@
         <GenerateDependencyFile>false</GenerateDependencyFile>
         <!-- Required for NStrip to work -->
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Configurations>Debug;Release;MelonLoader</Configurations>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -28,6 +29,14 @@
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' != 'MelonLoader' ">
+        <DefineConstants>BIE</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'MelonLoader' ">
+        <DefineConstants>ML</DefineConstants>
     </PropertyGroup>
 
     <!-- Hack! MelonLoader is locking the Mod files, this way I can build and output the mod dll with the game running -->
@@ -78,22 +87,36 @@
 		<Reference Include="SteamVR">
 			<HintPath>$(CVRPATH)\ChilloutVR_Data\Managed\SteamVR.dll</HintPath>
 		</Reference>
-		<Reference Include="ml_prm">
+        <Reference Include="ECM2">
+            <HintPath>$(CVRPATH)\ChilloutVR_Data\Managed\ECM2.dll</HintPath>
+        </Reference>
+
+        <PackageReference Include="UnityEngine.Modules" Version="2021.3.23" IncludeAssets="compile" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(Configuration)' != 'MelonLoader' ">
+        <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+        <PackageReference Include="BepInEx.Unity" Version="6.0.0-*" IncludeAssets="compile" />
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
+        
+        <Reference Include="ml_prm">
 			<HintPath>$(CVRPATH)\BepInEx\plugins\ml_prm.dll</HintPath>
 		</Reference>
 		<Reference Include="BTKUILib">
 			<HintPath>$(CVRPATH)\BepInEx\plugins\BTKUILib.dll</HintPath>
 		</Reference>
-        <Reference Include="ECM2">
-            <HintPath>$(CVRPATH)\ChilloutVR_Data\Managed\ECM2.dll</HintPath>
-        </Reference>
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-        <PackageReference Include="BepInEx.Unity" Version="6.0.0-*" IncludeAssets="compile" />
-        <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
-        <PackageReference Include="UnityEngine.Modules" Version="2021.3.23" IncludeAssets="compile" />
+    <ItemGroup Condition=" '$(Configuration)' == 'MelonLoader' ">
+        <PackageReference Include="LavaGang.MelonLoader" Version="0.6.1" />
+        <PackageReference Include="HarmonyX" Version="2.5.2" IncludeAssets="compile" />
+        
+        <Reference Include="ml_prm">
+			<HintPath>$(CVRPATH)\Mods\ml_prm.dll</HintPath>
+		</Reference>
+		<Reference Include="BTKUILib">
+			<HintPath>$(CVRPATH)\Mods\BTKUILib.dll</HintPath>
+		</Reference>
     </ItemGroup>
 
 </Project>

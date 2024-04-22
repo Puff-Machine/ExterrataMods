@@ -10,18 +10,25 @@ using ABI_RC.Core.Util.AssetFiltering;
 using System.Linq;
 using BepInEx;
 
-/*
+#if ML
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.1.2", "Exterrata")]
-[assembly: MelonAdditionalDependencies("DesktopVRIK")]
+//[assembly: MelonAdditionalDependencies("DesktopVRIK")]
 [assembly: MelonOptionalDependencies("ml_prm", "BTKUILib")]
 [assembly: HarmonyDontPatchAll]
-*/
+#endif
 
 namespace Koneko;
+
+#if BIE
 [BepInDependency("BTKUILib")]
-[BepInPlugin("CVRLimbsGrabber", "CVRLimbsGrabber", "1.1.0")]
+[BepInPlugin("LimbGrabber", "LimbGrabber", "1.1.2")]
 public class LimbGrabber : HybridMod
+#elif ML
+public class LimbGrabber : MelonMod
+#else
+#error Modloader not defined!
+#endif
 {
     public static readonly MelonPreferences_Category Category = MelonPreferences.CreateCategory("LimbGrabber");
     public static readonly MelonPreferences_Entry<bool> Enabled = Category.CreateEntry<bool>("Enabled", true, description: "Enable LimbGrabber");
@@ -99,7 +106,7 @@ public class LimbGrabber : HybridMod
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
     {
-        Logger.LogInfo("OnSceneWasInitialized was called");
+        MelonLogger.Msg("OnSceneWasInitialized was called");
         if (buildIndex == 3)
         {
             Limbs = new Limb[6];

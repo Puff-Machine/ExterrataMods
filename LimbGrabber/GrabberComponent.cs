@@ -29,15 +29,15 @@ public class GrabberComponent : MonoBehaviour
             else if((int)MovementData.AnimatorGestureRight == 2 || MovementData.RightMiddle1Stretched < -0.2 && MovementData.RightThumb1Stretched > 0.2) gesture = 2;
         }
 
-        if (gesture == 1 && Gesture != 1) // fist
+        if (gesture == 1 && Gesture != 1) // no gesture -> fist
         {
             LimbGrabber.Grab(this); 
         }
-        if (gesture == 0 && Gesture == 1)
+        if (gesture == 0 && Gesture == 1) // fist -> no gesture
         {
             LimbGrabber.Release(this);
         }
-        if (gesture == 2 && Gesture != 2) // thumbs up
+        if (gesture == 2 && Gesture != 2) // fist -> thumbs up
         {
             LimbGrabber.Pose(this);
         }
