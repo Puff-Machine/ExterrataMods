@@ -177,7 +177,7 @@ public class LimbGrabber : MelonMod
             if (RootGrabbed)
             {
                 //PlayerLocal.position = RootParent.position + RootOffset;
-                PlayerLocal.position = RootParent.position + NeckOffset - (PlayerLocal.position - Neck.position);
+                PlayerLocal.position = RootParent.position + NeckOffset + (PlayerLocal.position - Neck.position);
             }
             /*
             else if (IsAirborn)
