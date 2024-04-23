@@ -79,4 +79,12 @@ public class Patches
             MelonLogger.Error(e);
         }
     }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(ECM2.Character), "IsGrounded")]
+    public static void ForceGrounded(ref bool __result)
+    {
+        if (LimbGrabber.RootGrabbed && LimbGrabber.StayGrounded.Value)
+            __result = true;
+    }
 }

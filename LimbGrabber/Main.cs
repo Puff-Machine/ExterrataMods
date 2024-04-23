@@ -41,6 +41,7 @@ public class LimbGrabber : MelonMod
     public static readonly MelonPreferences_Entry<bool> PreserveMomentum = Category.CreateEntry<bool>("PreserveMomentum", true, "Preserve Momentum", "Keep your velocity when thrown by the root");
     public static readonly MelonPreferences_Entry<bool> Friend = Category.CreateEntry<bool>("FriendsOnly", true, "Friends Only", "Only allow friends to grab you");
     public static readonly MelonPreferences_Entry<bool> RagdollRelease = Category.CreateEntry<bool>("RagdollOnRelease", true, "Ragdoll", "Ragdoll when your root bone is released");
+    public static readonly MelonPreferences_Entry<bool> StayGrounded = Category.CreateEntry<bool>("StayGrounded", true, "Stay Grounded", "Stay in a grounded state while your root bone is being grabbed");
     public static readonly MelonPreferences_Entry<bool> Debug = Category.CreateEntry<bool>("Debug", false, "Debug", "Enable additional logging");
     public static readonly MelonPreferences_Entry<float> VelocityMultiplier = Category.CreateEntry<float>("VelocityMultiplier", 1f, "Velocity Multiplier", "Multiply your velocity when thrown");
     public static readonly MelonPreferences_Entry<float> GravityMultiplier = Category.CreateEntry<float>("GravityMultiplier", 1f, "Gravity Multiplier", "Multiply your gravity when thrown");
@@ -53,7 +54,7 @@ public class LimbGrabber : MelonMod
     public static Transform PlayerLocal;
     public static Transform Neck;
     public static Transform RootParent;
-    public static Rigidbody Root;
+    //public static Rigidbody Root;
     public static bool RootGrabbed;
     public static Vector3 RootOffset;
     public static Vector3 LastRootPosition;
@@ -106,11 +107,12 @@ public class LimbGrabber : MelonMod
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
     {
-        MelonLogger.Msg($"OnSceneWasInitialized was called, buildIndex={buildIndex}");
+        if (Debug.Value) MelonLogger.Msg($"OnSceneWasInitialized was called, buildIndex={buildIndex}");
         if (buildIndex == 3)
         {
             Limbs = new Limb[6];
             PlayerLocal = GameObject.Find("_PLAYERLOCAL").transform;
+            /*
             var root = new GameObject("LimbGrabberPhysics");
             UnityEngine.Object.DontDestroyOnLoad(root);
             var col = root.AddComponent<SphereCollider>();
@@ -123,6 +125,7 @@ public class LimbGrabber : MelonMod
             Root.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             Root.isKinematic = true;
             Root.useGravity = false;
+            */
 
             for (int i = 0; i < Limbs.Length; i++)
             {
@@ -171,6 +174,7 @@ public class LimbGrabber : MelonMod
                 }
             }
             if (RootGrabbed) PlayerLocal.position = RootParent.position + RootOffset;
+            /*
             else if (IsAirborn)
             {
                 if (PreserveMomentum.Value)
@@ -178,7 +182,7 @@ public class LimbGrabber : MelonMod
                     Root.velocity = Root.velocity + (BetterBetterCharacterController.Instance.gravity * Time.deltaTime * GravityMultiplier.Value);
                     PlayerLocal.position = Root.transform.position + new Vector3(0, -0.1f, 0);
                 }
-                if (Physics.CheckSphere(PlayerLocal.position, 0.11f, BetterBetterCharacterController.Instance.characterMovement.collisionLayers /*MovementSystem.Instance.groundMask*/, QueryTriggerInteraction.Ignore) || BetterBetterCharacterController.Instance.IsFlying())
+                if (Physics.CheckSphere(PlayerLocal.position, 0.11f, BetterBetterCharacterController.Instance.characterMovement.collisionLayers /*MovementSystem.Instance.groundMask*//*, QueryTriggerInteraction.Ignore) || BetterBetterCharacterController.Instance.IsFlying())
                 {
                     if (Debug.Value) MelonLogger.Msg("Landed");
                     Root.isKinematic = true;
@@ -186,6 +190,7 @@ public class LimbGrabber : MelonMod
                     if (WasRagdolled == false) BetterBetterCharacterController.Instance.SetImmobilized(false);
                 }
             }
+            */
         }
     }
 
@@ -258,22 +263,27 @@ public class LimbGrabber : MelonMod
         {
             if (grabber.transform != RootParent) return;
             if (Debug.Value) MelonLogger.Msg("limb " + Neck.name + " was released by " + grabber.transform.name);
-            if (!PreserveMomentum.Value) BetterBetterCharacterController.Instance.SetImmobilized(false); //MovementSystem.Instance.canMove = true;
-            else
+            BetterBetterCharacterController.Instance.SetImmobilized(false);
+            Vector3 Velocity = Vector3.zero;
+            //if (!PreserveMomentum.Value) BetterBetterCharacterController.Instance.SetImmobilized(false); //MovementSystem.Instance.canMove = true;
+            //else
+            if (PreserveMomentum.Value)
             {
-                Vector3 Velocity = Vector3.zero;
                 for (int i = 0; i < AverageVelocities.Length; i++)
                 {
                     Velocity += AverageVelocities[i];
                 }
                 Velocity /= AverageVelocities.Length;
                 Velocity *= VelocityMultiplier.Value * 100;
+                /*
                 Root.transform.position = PlayerLocal.transform.position + new Vector3(0, 0.1f, 0);
                 Root.isKinematic = false;
                 Root.velocity = Velocity;
+                */
+                BetterBetterCharacterController.Instance.LaunchCharacter(Velocity);
             }
             RootGrabbed = false;
-            if (PrmExists && RagdollRelease.Value && Root.velocity.magnitude > MinRagdollSpeed.Value)
+            if (PrmExists && RagdollRelease.Value && (Velocity.magnitude > MinRagdollSpeed.Value || !PreserveMomentum.Value))
             {
                 RagdollSupport.ToggleRagdoll();
                 WasRagdolled = true;
@@ -349,6 +359,7 @@ public class LimbGrabber : MelonMod
         }
     }
 
+    /*
     public static void StopFall(BetterBetterCharacterController.PlayerMoveOffset _)
     {
         if(Root is null)
@@ -360,4 +371,5 @@ public class LimbGrabber : MelonMod
         IsAirborn = false;
         BetterBetterCharacterController.Instance.SetImmobilized(false);
     }
+    */
 }
