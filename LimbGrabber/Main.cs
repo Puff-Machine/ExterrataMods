@@ -134,6 +134,8 @@ public class LimbGrabber : MelonMod
                 BTKUISupport.Initialize();
                 BTKExists = true;
             }
+
+            LegacyCompat.Initialize();
         }
     }
 

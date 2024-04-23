@@ -13,35 +13,26 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayerRotator", "PlayerRota
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
+		BepInEx|Any CPU = BepInEx|Any CPU
 		MelonLoader|Any CPU = MelonLoader|Any CPU
-		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AD416331-DD29-4691-8DB8-77C06FF34FEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD416331-DD29-4691-8DB8-77C06FF34FEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD416331-DD29-4691-8DB8-77C06FF34FEE}.BepInEx|Any CPU.ActiveCfg = BepInEx|Any CPU
+		{AD416331-DD29-4691-8DB8-77C06FF34FEE}.BepInEx|Any CPU.Build.0 = BepInEx|Any CPU
 		{AD416331-DD29-4691-8DB8-77C06FF34FEE}.MelonLoader|Any CPU.ActiveCfg = MelonLoader|Any CPU
 		{AD416331-DD29-4691-8DB8-77C06FF34FEE}.MelonLoader|Any CPU.Build.0 = MelonLoader|Any CPU
-		{AD416331-DD29-4691-8DB8-77C06FF34FEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD416331-DD29-4691-8DB8-77C06FF34FEE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4EAB7BA8-88E2-40D9-9201-A6E36B1BAA1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4EAB7BA8-88E2-40D9-9201-A6E36B1BAA1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EAB7BA8-88E2-40D9-9201-A6E36B1BAA1E}.BepInEx|Any CPU.ActiveCfg = BepInEx|Any CPU
+		{4EAB7BA8-88E2-40D9-9201-A6E36B1BAA1E}.BepInEx|Any CPU.Build.0 = BepInEx|Any CPU
 		{4EAB7BA8-88E2-40D9-9201-A6E36B1BAA1E}.MelonLoader|Any CPU.ActiveCfg = MelonLoader|Any CPU
 		{4EAB7BA8-88E2-40D9-9201-A6E36B1BAA1E}.MelonLoader|Any CPU.Build.0 = MelonLoader|Any CPU
-		{4EAB7BA8-88E2-40D9-9201-A6E36B1BAA1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4EAB7BA8-88E2-40D9-9201-A6E36B1BAA1E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{723F3D56-DD20-44B8-AF66-C82FC370033B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{723F3D56-DD20-44B8-AF66-C82FC370033B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{723F3D56-DD20-44B8-AF66-C82FC370033B}.BepInEx|Any CPU.ActiveCfg = BepInEx|Any CPU
+		{723F3D56-DD20-44B8-AF66-C82FC370033B}.BepInEx|Any CPU.Build.0 = BepInEx|Any CPU
 		{723F3D56-DD20-44B8-AF66-C82FC370033B}.MelonLoader|Any CPU.ActiveCfg = MelonLoader|Any CPU
 		{723F3D56-DD20-44B8-AF66-C82FC370033B}.MelonLoader|Any CPU.Build.0 = MelonLoader|Any CPU
-		{723F3D56-DD20-44B8-AF66-C82FC370033B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{723F3D56-DD20-44B8-AF66-C82FC370033B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{452BB8AB-1900-4768-97F2-EE12F4BDAED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{452BB8AB-1900-4768-97F2-EE12F4BDAED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{452BB8AB-1900-4768-97F2-EE12F4BDAED5}.BepInEx|Any CPU.ActiveCfg = BepInEx|Any CPU
+		{452BB8AB-1900-4768-97F2-EE12F4BDAED5}.BepInEx|Any CPU.Build.0 = BepInEx|Any CPU
 		{452BB8AB-1900-4768-97F2-EE12F4BDAED5}.MelonLoader|Any CPU.ActiveCfg = MelonLoader|Any CPU
 		{452BB8AB-1900-4768-97F2-EE12F4BDAED5}.MelonLoader|Any CPU.Build.0 = MelonLoader|Any CPU
-		{452BB8AB-1900-4768-97F2-EE12F4BDAED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{452BB8AB-1900-4768-97F2-EE12F4BDAED5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
