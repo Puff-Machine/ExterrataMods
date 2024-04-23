@@ -56,6 +56,7 @@ public class LimbGrabber : MelonMod
     public static Transform RootParent;
     //public static Rigidbody Root;
     public static bool RootGrabbed;
+    public static Vector3 NeckOffset;
     public static Vector3 RootOffset;
     public static Vector3 LastRootPosition;
     public static Vector3[] AverageVelocities;
@@ -173,7 +174,11 @@ public class LimbGrabber : MelonMod
                     VelocityIndex = 0;
                 }
             }
-            if (RootGrabbed) PlayerLocal.position = RootParent.position + RootOffset;
+            if (RootGrabbed)
+            {
+                //PlayerLocal.position = RootParent.position + RootOffset;
+                PlayerLocal.position = RootParent.position + NeckOffset - (PlayerLocal.position - Neck.position);
+            }
             /*
             else if (IsAirborn)
             {
@@ -219,6 +224,7 @@ public class LimbGrabber : MelonMod
                 if (!BetterBetterCharacterController.Instance.FlightAllowedInWorld) return;
                 grabber.Limb = closest;
                 if (Debug.Value) MelonLogger.Msg("limb " + Neck.name + " was grabbed by " + grabber.transform.name);
+                NeckOffset = Neck.position - grabber.transform.position;
                 RootOffset = PlayerLocal.position - grabber.transform.position;
                 RootParent = grabber.transform;
                 //MovementSystem.Instance.canMove = false;
