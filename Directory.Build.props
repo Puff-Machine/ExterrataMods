@@ -11,7 +11,7 @@
         <GenerateDependencyFile>false</GenerateDependencyFile>
         <!-- Required for NStrip to work -->
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Configurations>Debug;Release;MelonLoader</Configurations>
+        <Configurations>BepInEx;MelonLoader</Configurations>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

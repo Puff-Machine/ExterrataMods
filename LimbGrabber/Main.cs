@@ -8,7 +8,9 @@ using ABI_RC.Systems.IK.SubSystems;
 using ABI_RC.Systems.Movement;
 using ABI_RC.Core.Util.AssetFiltering;
 using System.Linq;
+#if BIE
 using BepInEx;
+#endif
 
 #if ML
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
