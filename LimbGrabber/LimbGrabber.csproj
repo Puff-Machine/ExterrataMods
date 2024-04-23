@@ -1,13 +1,33 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <!--<PropertyGroup>
-    <AssemblyName>CVRLimbsGrabber</AssemblyName>
-    <AssemblyTitle>CVRLimbsGrabber</AssemblyTitle>
-  </PropertyGroup>-->
-
+﻿<Project>
+  <Import Sdk="Microsoft.Net.Sdk" Project="Sdk.props"/>
+  
   <ItemGroup>
     <Compile Remove="LimbGrabberUnity\**" />
     <EmbeddedResource Remove="LimbGrabberUnity\**" />
     <None Remove="LimbGrabberUnity\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="LimbGrabberCompat\**" />
+    <EmbeddedResource Remove="LimbGrabberCompat\**" />
+    <None Remove="LimbGrabberCompat\**" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(RECURSIVE_BUILD)' != 'true' ">
+    <EmbeddedResource Include="$(OutDir)CVRLimbsGrabber.dll"/>
+  </ItemGroup>
+
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets"/>
+
+  <Target Name="BeforeBuild" Condition=" '$(RECURSIVE_BUILD)' != 'true' ">
+    <Message Text="Building Compatibility Assembly" Importance="high" />
+    <Delete Files="$(OutDir)CVRLimbsGrabber.dll" />
+    <Exec
+        ConsoleToMsBuild="true"
+        WorkingDirectory="$(MSBuildProjectDirectory)/LimbGrabberCompat"
+        Command="dotnet build --configuration $(Configuration)"
+        EnvironmentVariables="RECURSIVE_BUILD=true" />
+  </Target>
+
 </Project>
+

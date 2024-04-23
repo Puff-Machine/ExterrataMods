@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>CVRLimbsGrabber</AssemblyName>
+    <AssemblyTitle>CVRLimbsGrabber</AssemblyTitle>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LimbGrabber.csproj">
+      <Aliases>RealLimbGrabber,%(Aliases)</Aliases>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
