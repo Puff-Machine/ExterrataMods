@@ -32,6 +32,11 @@ internal sealed class LegacyCompat
             compatstream.CopyTo( ms );
             compatasm = Assembly.Load(ms.ToArray());
             MelonLogger.Msg($"Loaded compatasm = {compatasm}");
+            Type compatcomponent = compatasm.GetType("Koneko.GrabberComponent");
+            if (compatcomponent != null)
+                LimbGrabber.WhitelistComponent(compatcomponent);
+            else
+                MelonLogger.Error($"Unable to find Koneko.GrabberComponent in compatasm");
         }
         else
         {

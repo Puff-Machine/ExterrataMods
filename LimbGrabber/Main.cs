@@ -101,11 +101,16 @@ public class LimbGrabber : MelonMod
             MelonLogger.Error(e);
         }
 
+        WhitelistComponent(typeof(GrabberComponent));
+    }
+
+    public static void WhitelistComponent(Type type)
+    {
         var propWhitelist = Traverse.Create(typeof(SharedFilter)).Field<HashSet<Type>>("_spawnableWhitelist").Value;
-        propWhitelist.Add(typeof(GrabberComponent));
+        propWhitelist.Add(type);
 
         var avatarWhitelist = Traverse.Create(typeof(SharedFilter)).Field<HashSet<Type>>("_avatarWhitelist").Value;
-        avatarWhitelist.Add(typeof(GrabberComponent));
+        avatarWhitelist.Add(type);
     }
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
