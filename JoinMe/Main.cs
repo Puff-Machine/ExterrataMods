@@ -2,14 +2,27 @@
 using MelonLoader;
 using System.Linq;
 using System.Collections.Generic;
+#if BIE
+using BepInEx;
+#endif
 
+#if ML
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: MelonInfo(typeof(Koneko.JoinMe), "JoinMe", "1.1.0", "Exterrata")]
 [assembly: MelonOptionalDependencies("BTKUILib")]
 [assembly: HarmonyDontPatchAll]
+#endif
 
 namespace Koneko;
+#if BIE
+[BepInDependency("BTKUILib")]
+[BepInPlugin("JoinMe", "JoinMe", "1.1.0")]
+public class JoinMe : HybridMod
+#elif ML
 public class JoinMe : MelonMod
+#else
+#error Modloader not defined!
+#endif
 {
     public static readonly MelonPreferences_Category Category = MelonPreferences.CreateCategory("JoinMe");
     public static readonly MelonPreferences_Entry<bool> Enabled = Category.CreateEntry<bool>("Enabled", true);
@@ -25,7 +38,8 @@ public class JoinMe : MelonMod
         } catch(Exception e) { 
             MelonLogger.Error(e);
         }
-        if (RegisteredMelons.Any(it => it.Info.Name == "BTKUILib"))
+        //if (RegisteredMelons.Any(it => it.Info.Name == "BTKUILib"))
+        if (AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "BTKUILib"))
         {
             BTKUISupport.Initialize();
         }
