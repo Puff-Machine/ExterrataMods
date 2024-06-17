@@ -8,13 +8,14 @@ using ABI_RC.Systems.IK.SubSystems;
 using ABI_RC.Systems.Movement;
 using ABI_RC.Core.Util.AssetFiltering;
 using System.Linq;
+using System.Runtime.CompilerServices;
 #if BIE
 using BepInEx;
 #endif
 
 #if ML
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
-[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.2.1", "Exterrata")]
+[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.2.2", "Exterrata, Puff Machine")]
 //[assembly: MelonAdditionalDependencies("DesktopVRIK")]
 [assembly: MelonOptionalDependencies("ml_prm", "BTKUILib")]
 [assembly: HarmonyDontPatchAll]
@@ -24,7 +25,7 @@ namespace Koneko;
 
 #if BIE
 [BepInDependency("BTKUILib")]
-[BepInPlugin("LimbGrabber", "LimbGrabber", "1.2.1")]
+[BepInPlugin("LimbGrabber", "LimbGrabber", "1.2.2")]
 public class LimbGrabber : HybridMod
 #elif ML
 public class LimbGrabber : MelonMod
@@ -101,7 +102,20 @@ public class LimbGrabber : MelonMod
             MelonLogger.Error(e);
         }
 
+        if (Is_r175)
+            InitWhitelist();
+
         WhitelistComponent(typeof(GrabberComponent));
+    }
+
+    public static bool Is_r175 => Application.version.ToLower().StartsWith("2024r175");
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public static void InitWhitelist()
+    {
+        // Before whitelisting any components call the public getters once to ensure they are initialised
+        _ = SharedFilter.SpawnableWhitelist;
+        _ = SharedFilter.AvatarWhitelist;
     }
 
     public static void WhitelistComponent(Type type)
@@ -116,7 +130,7 @@ public class LimbGrabber : MelonMod
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
     {
         if (Debug.Value) MelonLogger.Msg($"OnSceneWasInitialized was called, buildIndex={buildIndex}");
-        if (buildIndex == 3)
+        if (buildIndex == (Is_r175 ? 3 : 2))
         {
             Limbs = new Limb[6];
             PlayerLocal = GameObject.Find("_PLAYERLOCAL").transform;
