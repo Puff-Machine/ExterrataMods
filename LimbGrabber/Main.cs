@@ -15,7 +15,7 @@ using BepInEx;
 
 #if ML
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
-[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.2.3", "Exterrata, Puff Machine")]
+[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.2.4", "Exterrata, Puff Machine")]
 //[assembly: MelonAdditionalDependencies("DesktopVRIK")]
 [assembly: MelonOptionalDependencies("ml_prm", "BTKUILib")]
 [assembly: HarmonyDontPatchAll]
@@ -25,7 +25,7 @@ namespace Koneko;
 
 #if BIE
 [BepInDependency("BTKUILib")]
-[BepInPlugin("LimbGrabber", "LimbGrabber", "1.2.3")]
+[BepInPlugin("LimbGrabber", "LimbGrabber", "1.2.4")]
 public class LimbGrabber : HybridMod
 #elif ML
 public class LimbGrabber : MelonMod
@@ -102,13 +102,10 @@ public class LimbGrabber : MelonMod
             MelonLogger.Error(e);
         }
 
-        if (!Is_r175)
-            InitWhitelist();
+        InitWhitelist();
 
         WhitelistComponent(typeof(GrabberComponent));
     }
-
-    public static bool Is_r175 => Application.version.ToLower().StartsWith("2024r175");
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void InitWhitelist()
@@ -130,7 +127,7 @@ public class LimbGrabber : MelonMod
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
     {
         if (Debug.Value) MelonLogger.Msg($"OnSceneWasInitialized was called, buildIndex={buildIndex}");
-        if (buildIndex == (Is_r175 ? 3 : 2))
+        if (buildIndex == 2)
         {
             Limbs = new Limb[6];
             PlayerLocal = GameObject.Find("_PLAYERLOCAL").transform;
