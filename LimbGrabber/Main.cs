@@ -58,6 +58,7 @@ public class LimbGrabber : MelonMod
     public static Transform PlayerLocal;
     public static Transform Neck;
     public static Transform RootParent;
+    public static List<Transform> AdditionalRootPoints;
     public static bool RootGrabbed;
     public static Vector3 NeckOffset;
     public static Vector3 RootOffset;
@@ -80,6 +81,7 @@ public class LimbGrabber : MelonMod
         public Quaternion RotationOffset;
         public Vector3 PositionOffset;
         public bool Grabbed;
+        public List<Transform> AdditionalPoints;
     }
 
     public override void OnInitializeMelon()
@@ -131,9 +133,12 @@ public class LimbGrabber : MelonMod
         {
             Limbs = new Limb[6];
             PlayerLocal = GameObject.Find("_PLAYERLOCAL").transform;
+            AdditionalRootPoints = new List<Transform>();
 
             for (int i = 0; i < Limbs.Length; i++)
             {
+                Limbs[i].AdditionalPoints = new List<Transform>();
+                
                 var limb = new GameObject("LimbGrabberTarget").transform;
                 Limbs[i].Target = limb;
                 limb.parent = PlayerLocal;
@@ -204,6 +209,33 @@ public class LimbGrabber : MelonMod
             {
                 distance = dist;
                 closest = i;
+            }
+
+            if (i == 6)
+            {
+                foreach (var additionPoint in AdditionalRootPoints)
+                {
+                    if (!additionPoint.gameObject.activeInHierarchy) continue;
+                    dist = Vector3.Distance(grabber.transform.position, additionPoint.position);
+                    if (dist < distance)
+                    {
+                        distance = dist;
+                        closest = i;
+                    }
+                }
+                
+                continue;
+            }
+            
+            foreach (var additionPoint in Limbs[i].AdditionalPoints)
+            {
+                if (!additionPoint.gameObject.activeInHierarchy) continue;
+                dist = Vector3.Distance(grabber.transform.position, additionPoint.position);
+                if (dist < distance)
+                {
+                    distance = dist;
+                    closest = i;
+                }
             }
         }
         if (distance < Distance.Value)

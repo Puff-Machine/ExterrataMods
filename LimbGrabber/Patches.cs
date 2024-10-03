@@ -62,17 +62,77 @@ public class Patches
 
             LimbGrabber.Limbs[0].limb = animator.GetBoneTransform(HumanBodyBones.LeftHand);
             LimbGrabber.Limbs[0].PreviousTarget = solver.leftArm.target;
+
+            LimbGrabber.Limbs[0].AdditionalPoints.Clear();
+            Transform[] children = LimbGrabber.Limbs[0].limb.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (child.name.Contains("[LimbGrabber]")) LimbGrabber.Limbs[0].AdditionalPoints.Add(child);
+            }
+            
             LimbGrabber.Limbs[1].limb = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
             LimbGrabber.Limbs[1].PreviousTarget = solver.leftLeg.target;
+            
+            LimbGrabber.Limbs[1].AdditionalPoints.Clear();
+            children = LimbGrabber.Limbs[1].limb.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (child.name.Contains("[LimbGrabber]")) LimbGrabber.Limbs[1].AdditionalPoints.Add(child);
+            }
+            
             LimbGrabber.Limbs[2].limb = animator.GetBoneTransform(HumanBodyBones.RightHand);
             LimbGrabber.Limbs[2].PreviousTarget = solver.rightArm.target;
+            
+            LimbGrabber.Limbs[2].AdditionalPoints.Clear();
+            children = LimbGrabber.Limbs[2].limb.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (child.name.Contains("[LimbGrabber]")) LimbGrabber.Limbs[2].AdditionalPoints.Add(child);
+            }
+            
             LimbGrabber.Limbs[3].limb = animator.GetBoneTransform(HumanBodyBones.RightFoot);
             LimbGrabber.Limbs[3].PreviousTarget = solver.rightLeg.target;
+            
+            LimbGrabber.Limbs[3].AdditionalPoints.Clear();
+            children = LimbGrabber.Limbs[3].limb.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (child.name.Contains("[LimbGrabber]")) LimbGrabber.Limbs[3].AdditionalPoints.Add(child);
+            }
+            
             LimbGrabber.Limbs[4].limb = animator.GetBoneTransform(HumanBodyBones.Head);
             LimbGrabber.Limbs[4].PreviousTarget = solver.spine.headTarget;
+            
+            LimbGrabber.Limbs[4].AdditionalPoints.Clear();
+            children = LimbGrabber.Limbs[4].limb.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (child.name.Contains("[LimbGrabber]")) LimbGrabber.Limbs[4].AdditionalPoints.Add(child);
+            }
+            
             LimbGrabber.Limbs[5].limb = animator.GetBoneTransform(HumanBodyBones.Hips);
             LimbGrabber.Limbs[5].PreviousTarget = solver.spine.pelvisTarget;
+            
+            LimbGrabber.Limbs[5].AdditionalPoints.Clear();
+            children = LimbGrabber.Limbs[5].limb.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (LimbGrabber.Limbs[0].AdditionalPoints.Contains(child)) continue;
+                if (LimbGrabber.Limbs[1].AdditionalPoints.Contains(child)) continue;
+                if (LimbGrabber.Limbs[2].AdditionalPoints.Contains(child)) continue;
+                if (LimbGrabber.Limbs[3].AdditionalPoints.Contains(child)) continue;
+                if (LimbGrabber.Limbs[4].AdditionalPoints.Contains(child)) continue;
+                if (child.name.Contains("[LimbGrabber]")) LimbGrabber.Limbs[5].AdditionalPoints.Add(child);
+            }
+            
             LimbGrabber.Neck = animator.GetBoneTransform(HumanBodyBones.Neck);
+            LimbGrabber.AdditionalRootPoints.Clear();
+            children = animator.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (child.name.Contains("[LimbGrabberRoot]")) LimbGrabber.AdditionalRootPoints.Add(child);
+            }
+            
             LimbGrabber.Initialized = true;
         } catch (Exception e)
         {
