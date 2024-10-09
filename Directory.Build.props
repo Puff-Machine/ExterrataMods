@@ -112,7 +112,7 @@
         <PackageReference Include="HarmonyX" Version="2.5.2" IncludeAssets="compile" />
         
         <Reference Include="ml_prm">
-			<HintPath>$(CVRPATH)\Mods\ml_prm.dll</HintPath>
+			<HintPath>$(CVRPATH)\Mods\PlayerRagdollMod.dll</HintPath>
 		</Reference>
 		<Reference Include="BTKUILib">
 			<HintPath>$(CVRPATH)\Mods\BTKUILib.dll</HintPath>
