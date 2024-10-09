@@ -15,7 +15,7 @@ using BepInEx;
 
 #if ML
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
-[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.3.0", "Exterrata, Puff Machine")]
+[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.3.1", "Exterrata, Puff Machine")]
 //[assembly: MelonAdditionalDependencies("DesktopVRIK")]
 [assembly: MelonOptionalDependencies("ml_prm", "BTKUILib")]
 [assembly: HarmonyDontPatchAll]
@@ -25,7 +25,7 @@ namespace Koneko;
 
 #if BIE
 [BepInDependency("BTKUILib")]
-[BepInPlugin("LimbGrabber", "LimbGrabber", "1.3.0")]
+[BepInPlugin("LimbGrabber", "LimbGrabber", "1.3.1")]
 public class LimbGrabber : HybridMod
 #elif ML
 public class LimbGrabber : MelonMod
@@ -58,6 +58,7 @@ public class LimbGrabber : MelonMod
     public static Transform PlayerLocal;
     public static Transform Neck;
     public static Transform RootParent;
+    public static Transform RootGrabbedVia;
     public static List<Transform> AdditionalRootPoints;
     public static bool RootGrabbed;
     public static Vector3 NeckOffset;
@@ -187,7 +188,7 @@ public class LimbGrabber : MelonMod
             if (RootGrabbed)
             {
                 if (LockNeck.Value)
-                    PlayerLocal.position = RootParent.position + NeckOffset + (PlayerLocal.position - Neck.position);
+                    PlayerLocal.position = RootParent.position + NeckOffset + (PlayerLocal.position - RootGrabbedVia.position);
                 else
                     PlayerLocal.position = RootParent.position + RootOffset;
             }
@@ -199,6 +200,7 @@ public class LimbGrabber : MelonMod
         if (!Enabled.Value || !Initialized || BodySystem.isCalibrating) return;
         if (Debug.Value) MelonLogger.Msg("grab was detected");
         int closest = 0;
+        Transform grabbedVia = null;
         float distance = float.PositiveInfinity;
         for (int i = 0; i < 7; i++)
         {
@@ -209,6 +211,7 @@ public class LimbGrabber : MelonMod
             {
                 distance = dist;
                 closest = i;
+                grabbedVia = null;
             }
 
             if (i == 6)
@@ -221,6 +224,7 @@ public class LimbGrabber : MelonMod
                     {
                         distance = dist;
                         closest = i;
+                        grabbedVia = additionPoint;
                     }
                 }
                 
@@ -235,6 +239,7 @@ public class LimbGrabber : MelonMod
                 {
                     distance = dist;
                     closest = i;
+                    grabbedVia = additionPoint;
                 }
             }
         }
@@ -245,8 +250,9 @@ public class LimbGrabber : MelonMod
             {
                 if (!BetterBetterCharacterController.Instance.FlightAllowedInWorld) return;
                 grabber.Limb = closest;
-                if (Debug.Value) MelonLogger.Msg("limb " + Neck.name + " was grabbed by " + grabber.transform.name);
-                NeckOffset = Neck.position - grabber.transform.position;
+                if (Debug.Value) MelonLogger.Msg($"limb {Neck.name} was grabbed by {grabber.transform.name}");
+                RootGrabbedVia = grabbedVia == null ? Neck : grabbedVia;
+                NeckOffset = RootGrabbedVia.position - grabber.transform.position;
                 RootOffset = PlayerLocal.position - grabber.transform.position;
                 RootParent = grabber.transform;
                 BetterBetterCharacterController.Instance.SetImmobilized(true);
