@@ -1,0 +1,8 @@
+<Project>
+    <Target Name="Install" DependsOnTargets="$(BuildDependsOn)">
+        <Message Text="INSTALL: $(AssemblyName).dll" Importance="High" />
+        <Copy
+            SourceFiles="$(OutputPath)/$(AssemblyName).dll"
+            DestinationFolder="$(ModsPath)" />
+    </Target>
+</Project>

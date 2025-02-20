@@ -4,6 +4,7 @@ using UnityEngine;
 using ABI_RC.Core.Player;
 using ABI_RC.Core.Networking.IO.Social;
 using MelonLoader;
+using ABI_RC.Systems.IK;
 
 namespace Koneko;
 public class GrabberComponent : MonoBehaviour
@@ -21,12 +22,12 @@ public class GrabberComponent : MonoBehaviour
         if (grabber == 0) gesture = Grab ? 1 : 0;
         else if (!Friends.FriendsWith(PlayerDescriptor.ownerId) && LimbGrabber.Friend.Value) return;
         else if (grabber == 1) {
-            if((int)MovementData.AnimatorGestureLeft == 1 || MovementData.LeftMiddle1Stretched < -0.2 && MovementData.LeftThumb1Stretched < -0.2) gesture = 1; 
-            else if((int)MovementData.AnimatorGestureLeft == 2 || MovementData.LeftMiddle1Stretched < -0.2 && MovementData.LeftThumb1Stretched > 0.2) gesture = 2;
+            if((int)MovementData.AnimatorGestureLeft == 1 || MovementData.MuscleValues[(int)MuscleIndex.LeftMiddle1Stretched] < -0.2 && MovementData.MuscleValues[(int)MuscleIndex.LeftThumb1Stretched] < -0.2) gesture = 1; 
+            else if((int)MovementData.AnimatorGestureLeft == 2 || MovementData.MuscleValues[(int)MuscleIndex.LeftMiddle1Stretched] < -0.2 && MovementData.MuscleValues[(int)MuscleIndex.LeftThumb1Stretched] > 0.2) gesture = 2;
         }
         else if (grabber == 2) { 
-            if((int)MovementData.AnimatorGestureRight == 1 || MovementData.RightMiddle1Stretched < -0.2 && MovementData.RightThumb1Stretched < -0.2) gesture = 1;
-            else if((int)MovementData.AnimatorGestureRight == 2 || MovementData.RightMiddle1Stretched < -0.2 && MovementData.RightThumb1Stretched > 0.2) gesture = 2;
+            if((int)MovementData.AnimatorGestureRight == 1 || MovementData.MuscleValues[(int)MuscleIndex.RightMiddle1Stretched] < -0.2 && MovementData.MuscleValues[(int)MuscleIndex.RightThumb1Stretched] < -0.2) gesture = 1;
+            else if((int)MovementData.AnimatorGestureRight == 2 || MovementData.MuscleValues[(int)MuscleIndex.RightMiddle1Stretched] < -0.2 && MovementData.MuscleValues[(int)MuscleIndex.RightThumb1Stretched] > 0.2) gesture = 2;
         }
 
         if (gesture == 1 && Gesture != 1) // no gesture -> fist
