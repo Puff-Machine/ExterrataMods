@@ -15,7 +15,8 @@ using BepInEx;
 
 #if ML
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
-[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.3.2", "Exterrata, Puff Machine")]
+[assembly: MelonInfo(typeof(Koneko.LimbGrabber), "LimbGrabber", "1.3.3", "Exterrata, Puff Machine")]
+[assembly: MelonAdditionalCredits("Khodrin")]
 //[assembly: MelonAdditionalDependencies("DesktopVRIK")]
 [assembly: MelonOptionalDependencies("ml_prm", "BTKUILib")]
 [assembly: HarmonyDontPatchAll]
@@ -25,7 +26,7 @@ namespace Koneko;
 
 #if BIE
 [BepInDependency("BTKUILib")]
-[BepInPlugin("LimbGrabber", "LimbGrabber", "1.3.2")]
+[BepInPlugin("LimbGrabber", "LimbGrabber", "1.3.3")]
 public class LimbGrabber : HybridMod
 #elif ML
 public class LimbGrabber : MelonMod
