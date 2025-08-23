@@ -10,7 +10,7 @@ namespace Koneko;
 public class GrabberComponent : MonoBehaviour
 {
     internal PlayerAvatarMovementData MovementData;
-    internal PlayerDescriptor PlayerDescriptor;
+    internal PuppetMaster PuppetMaster;
     internal int grabber = 0;
     internal int Limb = -1;
     internal int Gesture;
@@ -20,7 +20,7 @@ public class GrabberComponent : MonoBehaviour
     {
         int gesture = 0;
         if (grabber == 0) gesture = Grab ? 1 : 0;
-        else if (!Friends.FriendsWith(PlayerDescriptor.ownerId) && LimbGrabber.Friend.Value) return;
+        else if (!Friends.FriendsWith(PuppetMaster.PlayerId) && LimbGrabber.Friend.Value) return;
         else if (grabber == 1) {
             if((int)MovementData.AnimatorGestureLeft == 1 || MovementData.MuscleValues[(int)MuscleIndex.LeftMiddle1Stretched] < -0.2 && MovementData.MuscleValues[(int)MuscleIndex.LeftThumb1Stretched] < -0.2) gesture = 1; 
             else if((int)MovementData.AnimatorGestureLeft == 2 || MovementData.MuscleValues[(int)MuscleIndex.LeftMiddle1Stretched] < -0.2 && MovementData.MuscleValues[(int)MuscleIndex.LeftThumb1Stretched] > 0.2) gesture = 2;

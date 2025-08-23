@@ -1,5 +1,9 @@
 ﻿<Project>
   <Import Sdk="Microsoft.Net.Sdk" Project="Sdk.props"/>
+
+  <PropertyGroup>
+    <Version>1.3.5</Version>
+  </PropertyGroup>
   
   <ItemGroup>
     <Compile Remove="LimbGrabberUnity\**" />

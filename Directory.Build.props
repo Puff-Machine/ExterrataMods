@@ -9,6 +9,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <GenerateDependencyFile>false</GenerateDependencyFile>
+        <RootNamespace>Koneko</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -64,7 +65,6 @@
     <!-- BepInEx Common -->
     <ItemGroup Condition="$(Configuration.Contains('BIE'))">
         <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
     </ItemGroup>
     <!-- BepInEx 6 Unity Mono -->
     <ItemGroup Condition="'$(Configuration)'=='BIE6_Unity_Mono'">
@@ -119,6 +119,7 @@
         <Reference Include="$(AppPath)/$(AppName)_Data/Managed/mscorlib.dll" />
 
         <PackageReference Include="UnityEngine.Modules" Version="2021.3.23" IncludeAssets="compile" />
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
     </ItemGroup>
 
     <ItemGroup>

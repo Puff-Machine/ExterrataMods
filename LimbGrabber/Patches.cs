@@ -11,24 +11,24 @@ namespace Koneko;
 public class Patches
 {
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(PuppetMaster), "AvatarInstantiated")]
-    public static void SetupGrabber(ref PlayerDescriptor ____playerDescriptor, ref PlayerAvatarMovementData ____playerAvatarMovementDataCurrent, ref Animator ____animator)
+    [HarmonyPatch(typeof(PuppetMaster), "OnSetupAvatar")]
+    public static void SetupGrabber(PuppetMaster __instance, ref PlayerAvatarMovementData ____playerAvatarMovementDataCurrent)
     {
         try
         {
-            if (!____animator.isHuman) return;
-            Transform LeftHand = ____animator.GetBoneTransform(HumanBodyBones.LeftHand);
+            if (!__instance.Animator.isHuman) return;
+            Transform LeftHand = __instance.Animator.GetBoneTransform(HumanBodyBones.LeftHand);
             if (LeftHand == null) return;
             GrabberComponent LeftGrabber = LeftHand.gameObject.AddComponent<GrabberComponent>();
             LeftGrabber.MovementData = ____playerAvatarMovementDataCurrent;
-            LeftGrabber.PlayerDescriptor = ____playerDescriptor;
+            LeftGrabber.PuppetMaster = __instance;
             LeftGrabber.grabber = 1;
 
-            Transform RightHand = ____animator.GetBoneTransform(HumanBodyBones.RightHand);
+            Transform RightHand = __instance.Animator.GetBoneTransform(HumanBodyBones.RightHand);
             if (RightHand == null) return;
             GrabberComponent RightGrabber = RightHand.gameObject.AddComponent<GrabberComponent>();
             RightGrabber.MovementData = ____playerAvatarMovementDataCurrent;
-            RightGrabber.PlayerDescriptor = ____playerDescriptor;
+            RightGrabber.PuppetMaster = __instance;
             RightGrabber.grabber = 2;
         } catch (Exception e)
         {
@@ -38,13 +38,13 @@ public class Patches
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(BodySystem), "Calibrate")]
-    [HarmonyPatch(typeof(PlayerSetup), "SetupAvatar")]
+    [HarmonyPatch(typeof(PlayerSetup), "OnSetupAvatar")]
     public static void LimbSetup()
     {
         try
         {
-            Animator animator = PlayerSetup.Instance._animator;
-            VRIK vrik = PlayerSetup.Instance._avatar.GetComponent<VRIK>();
+            Animator animator = PlayerSetup.Instance.Animator;
+            VRIK vrik = PlayerSetup.Instance.AvatarTransform.GetComponent<VRIK>();
             if (vrik == null)
             {
                 LimbGrabber.Initialized = false;
