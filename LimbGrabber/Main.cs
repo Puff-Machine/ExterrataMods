@@ -9,30 +9,18 @@ using ABI_RC.Systems.Movement;
 using ABI_RC.Core.Util.AssetFiltering;
 using System.Linq;
 using System.Runtime.CompilerServices;
-#if BIE
-using BepInEx;
-#endif
+using UnityEngine.SceneManagement;
 
-#if ML
 [assembly: MelonGame(null, "ChilloutVR")]
 [assembly: MelonInfo(typeof(Koneko.LimbGrabber), Koneko.MyPluginInfo.PLUGIN_NAME, Koneko.MyPluginInfo.PLUGIN_VERSION, "Exterrata, Puff Machine")]
 [assembly: MelonAdditionalCredits("Khodrin")]
 //[assembly: MelonAdditionalDependencies("DesktopVRIK")]
-[assembly: MelonOptionalDependencies("ml_prm", "BTKUILib")]
+[assembly: MelonOptionalDependencies("PlayerRagdollMod")]
 [assembly: HarmonyDontPatchAll]
-#endif
 
 namespace Koneko;
 
-#if BIE
-[BepInDependency("BTKUILib")]
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-public class LimbGrabber : HybridMod
-#elif ML
 public class LimbGrabber : MelonMod
-#else
-#error Modloader not defined!
-#endif
 {
     public static readonly MelonPreferences_Category Category = MelonPreferences.CreateCategory("LimbGrabber");
     public static readonly MelonPreferences_Entry<bool> Enabled = Category.CreateEntry<bool>("Enabled", true, description: "Enable LimbGrabber");
@@ -72,7 +60,6 @@ public class LimbGrabber : MelonMod
     public static bool IsAirborn;
     public static bool WasRagdolled;
     public static bool PrmExists;
-    public static bool BTKExists;
 
     public struct Limb
     {
@@ -89,6 +76,7 @@ public class LimbGrabber : MelonMod
     public override void OnInitializeMelon()
     {
         MelonLogger.Msg("Starting");
+        SceneManager.sceneLoaded += OnSceneLoaded;
         tracking = new bool[6];
         AverageVelocities = new Vector3[5];
         enabled = new MelonPreferences_Entry<bool>[7] {
@@ -111,6 +99,11 @@ public class LimbGrabber : MelonMod
         WhitelistComponent(typeof(GrabberComponent));
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        HandleSceneInitialized(scene.buildIndex, scene.name);
+    }
+
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void InitWhitelist()
     {
@@ -128,7 +121,7 @@ public class LimbGrabber : MelonMod
         avatarWhitelist.Add(type);
     }
 
-    public override void OnSceneWasInitialized(int buildIndex, string sceneName)
+    private static void HandleSceneInitialized(int buildIndex, string sceneName)
     {
         if (Debug.Value) MelonLogger.Msg($"OnSceneWasInitialized was called, buildIndex={buildIndex}");
         if (buildIndex == 2)
@@ -151,13 +144,8 @@ public class LimbGrabber : MelonMod
                 RagdollSupport.Initialize();
                 PrmExists = true;
             }
-            //if (RegisteredMelons.Any(it => it.Info.Name == "BTKUILib"))
-            if (AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "BTKUILib"))
-            {
-                BTKUISupport.Initialize();
-                BTKExists = true;
-            }
 
+            BTKUISupport.Initialize();
             LegacyCompat.Initialize();
         }
     }

@@ -1,8 +1,8 @@
-﻿using BTKUILib;
-using BTKUILib.UIObjects;
-using BTKUILib.UIObjects.Components;
-using MelonLoader;
+﻿using MelonLoader;
 using System;
+using ABI_RC.Systems.UI.UILib;
+using ABI_RC.Systems.UI.UILib.UIObjects;
+using ABI_RC.Systems.UI.UILib.UIObjects.Components;
 
 namespace Koneko;
 internal class BTKUISupport

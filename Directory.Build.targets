@@ -1,8 +1,13 @@
 <Project>
-    <Target Name="Install" DependsOnTargets="$(BuildDependsOn)">
-        <Message Text="INSTALL: $(AssemblyName).dll" Importance="High" />
-        <Copy
-            SourceFiles="$(OutputPath)/$(AssemblyName).dll"
-            DestinationFolder="$(ModsPath)" />
-    </Target>
+  <!-- Temporary hack: I don't have any Melons installed, this should be safe -->
+  <Target Name="ConfigureMelonLocalModSearchPaths"
+          AfterTargets="ResolveCvrInstallPath"
+          BeforeTargets="ResolveCvrModReferences"
+          Condition="'$(LoaderFlavor)' == 'MelonLoader'">
+    <ItemGroup>
+      <CvrModReference Update="PlayerRagdollMod">
+        <SearchPath>$(CVRPath)\BepInEx\plugins</SearchPath>
+      </CvrModReference>
+    </ItemGroup>
+  </Target>
 </Project>

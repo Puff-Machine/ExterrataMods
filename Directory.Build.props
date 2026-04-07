@@ -1,134 +1,21 @@
 <Project>
 
     <PropertyGroup>
-        <!-- Put your Chillout vr path in a new environnment variable CVRPATH in Windows -->
         <OutputPath>$(MsBuildThisFileDirectory)/.Builds</OutputPath>
         <LangVersion>latest</LangVersion>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <TargetFramework>net48</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <GenerateDependencyFile>false</GenerateDependencyFile>
         <RootNamespace>Koneko</RootNamespace>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <AppName>ChilloutVR</AppName>
-        <AppPath>$(MSBuildThisFileDirectory)$(AppName)</AppPath>
-        <AppPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\$(AppName)\')">C:\Program Files (x86)\Steam\steamapps\common\$(AppName)</AppPath>
-        <AppPath Condition="Exists('E:\SteamLibrary\steamapps\common\$(AppName)\')">E:\SteamLibrary\steamapps\common\$(AppName)</AppPath>
-        <AppPath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/$(AppName)/')">$(HOME)/.steam/steam/steamapps/common/$(AppName)</AppPath>
-        <AppPath Condition="'$(CVRPATH)' != '' And Exists('$(CVRPATH)')">$(CVRPATH)</AppPath>
-        <ModsPath Condition="$(Configuration.Contains('BIE'))">$(AppPath)/BepInEx/Plugins</ModsPath>
-        <ModsPath Condition="$(Configuration.Contains('ML'))">$(AppPath)/Mods</ModsPath>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="$(Configuration.ToLower().Contains('debug'))">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>embedded</DebugType>
-        <Optimize>false</Optimize>
-        <DefineConstants>DEBUG;TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="! $(Configuration.ToLower().Contains('debug'))">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>embedded</DebugType>
-        <Optimize>true</Optimize>
-        <DefineConstants>TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <Configurations>BIE5_Mono;BIE6_Mono;BIE6_Unity_Mono;ML_Mono</Configurations>
-    </PropertyGroup>
-
-    <!-- BepInEx 6 Unity Mono -->
-    <PropertyGroup Condition="'$(Configuration)'=='BIE6_Unity_Mono'">
-        <DefineConstants>MONO,BIE,BIPUNITY,BIE6</DefineConstants>
-    </PropertyGroup>
-    <!-- BepInEx 6 Mono -->
-    <PropertyGroup Condition="'$(Configuration)'=='BIE6_Mono'">
-        <DefineConstants>MONO,BIE,BIE6</DefineConstants>
-    </PropertyGroup>
-    <!-- BepInEx 5 Mono -->
-    <PropertyGroup Condition="'$(Configuration)'=='BIE5_Mono'">
-        <DefineConstants>MONO,BIE,BIE5</DefineConstants>
-    </PropertyGroup>
-    <!-- MelonLoader Mono -->
-    <PropertyGroup Condition="'$(Configuration)'=='ML_Mono'">
-        <DefineConstants>MONO,ML</DefineConstants>
-    </PropertyGroup>
-
-    <!-- BepInEx Common -->
-    <ItemGroup Condition="$(Configuration.Contains('BIE'))">
-        <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-    </ItemGroup>
-    <!-- BepInEx 6 Unity Mono -->
-    <ItemGroup Condition="'$(Configuration)'=='BIE6_Unity_Mono'">
-        <PackageReference Include="BepInEx.Unity.Mono" Version="6.0.0-*" IncludeAssets="compile" />
-    </ItemGroup>
-    <!-- BepInEx 6 Mono -->
-    <ItemGroup Condition="'$(Configuration)'=='BIE6_Mono'">
-        <PackageReference Include="BepInEx.Unity" Version="6.0.0-*" IncludeAssets="compile" />
-    </ItemGroup>
-    <!-- BepInEx 5 Mono -->
-    <ItemGroup Condition="'$(Configuration)'=='BIE5_Mono'">
-        <PackageReference Include="BepInEx.Core" Version="5.*" />
-    </ItemGroup>
-    <!-- MelonLoader Mono -->
-    <ItemGroup Condition="'$(Configuration)'=='ML_Mono'">
-        <PackageReference Include="LavaGang.MelonLoader" Version="0.7.1" />
-        <PackageReference Include="HarmonyX" Version="2.5.2" IncludeAssets="compile" />
-    </ItemGroup>
-
-    <!-- Hack! MelonLoader is locking the Mod files, this way I can build and output the mod dll with the game running -->
-    <!--
-    <Target Name="DeleteOutputDLLIfExists" BeforeTargets="BeforeBuild">
-        <Exec Command="if exist &quot;$(OutputPath)$(TargetName).dll&quot; del /F /Q &quot;$(OutputPath)$(TargetName).dll&quot;" />
-    </Target>
-    -->
-
-    <PropertyGroup>
-        <!-- Required for NStrip to work -->
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+        <EnableBepinise>true</EnableBepinise>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
-
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/Assembly-CSharp.dll" Publicize="true" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/Assembly-CSharp-firstpass.dll" Publicize="true" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/ECM2.dll" Publicize="true" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/DarkRift.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/MTJobSystem.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/Newtonsoft.Json.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/Unity.TextMeshPro.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/Unity.ProBuilder.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/cohtml.Net.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/cohtml.Runtime.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/cohtml.RenderingBackend.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/System.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/System.Core.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/System.Drawing.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/System.EnterpriseServices.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/System.Net.Http.dll" />
-        <Reference Include="$(AppPath)/$(AppName)_Data/Managed/mscorlib.dll" />
-
-        <PackageReference Include="UnityEngine.Modules" Version="2021.3.23" IncludeAssets="compile" />
-        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="BTKUILib">
-            <HintPath>$(ModsPath)/BTKUILib.dll</HintPath>
-        </Reference>
+        <!--
         <Reference Include="PlayerRagdollMod">
             <HintPath>$(ModsPath)/PlayerRagdollMod.dll</HintPath>
         </Reference>
+        -->
+        <CvrModReference Include="PlayerRagdollMod"/>
     </ItemGroup>
 
 </Project>

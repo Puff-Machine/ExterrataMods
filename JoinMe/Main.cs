@@ -9,16 +9,11 @@ using BepInEx;
 #if ML
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: MelonInfo(typeof(Koneko.JoinMe), "JoinMe", "1.1.0", "Exterrata")]
-[assembly: MelonOptionalDependencies("BTKUILib")]
 [assembly: HarmonyDontPatchAll]
 #endif
 
 namespace Koneko;
-#if BIE
-[BepInDependency("BTKUILib")]
-[BepInPlugin("JoinMe", "JoinMe", "1.1.0")]
-public class JoinMe : HybridMod
-#elif ML
+#if BIE || ML
 public class JoinMe : MelonMod
 #else
 #error Modloader not defined!
@@ -39,10 +34,10 @@ public class JoinMe : MelonMod
             MelonLogger.Error(e);
         }
         //if (RegisteredMelons.Any(it => it.Info.Name == "BTKUILib"))
-        if (AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "BTKUILib"))
-        {
-            BTKUISupport.Initialize();
-        }
+        //if (AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "BTKUILib"))
+        //{
+        BTKUISupport.Initialize();
+        //}
         RequestWhitelistList = RequestWhitelist.Value.Split(',').ToList();
     }
 

@@ -1,0 +1,15 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="BepInEx6_Debug" />
+    <BuildType Name="BepInEx6_Release" />
+    <BuildType Name="BepInEx5_Debug" />
+    <BuildType Name="BepInEx5_Release" />
+    <BuildType Name="Melon_Debug" />
+    <BuildType Name="Melon_Release" />
+  </Configurations>
+  <Project Path="ControllerFreeze/ControllerFreeze.csproj" />
+  <Project Path="JoinMe/JoinMe.csproj" />
+  <Project Path="LimbGrabber/LimbGrabber.csproj" />
+  <Project Path="LimbGrabber/LimbGrabberCompat/CVRLimbsGrabber.csproj" />
+  <Project Path="PlayerRotator/PlayerRotator.csproj" />
+</Solution>
