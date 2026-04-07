@@ -107,11 +107,8 @@ public class LimbGrabber : MelonMod
 
     public static void WhitelistComponent(Type type)
     {
-        var propWhitelist = Traverse.Create(typeof(SharedFilter)).Field<HashSet<Type>>("_spawnableWhitelist").Value;
-        propWhitelist.Add(type);
-
-        var avatarWhitelist = Traverse.Create(typeof(SharedFilter)).Field<HashSet<Type>>("_avatarWhitelist").Value;
-        avatarWhitelist.Add(type);
+        SharedFilter.SpawnableWhitelist.Add(type);
+        SharedFilter.AvatarWhitelist.Add(type);
     }
 
     private static void HandleSceneInitialized(int buildIndex, string sceneName)

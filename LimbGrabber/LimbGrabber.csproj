@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk;Cvr.Mod.Sdk">
 
   <PropertyGroup>
-    <Version>1.3.6</Version>
+    <Version>1.3.7</Version>
     <_LimbGrabberCompatProject>$(MSBuildProjectDirectory)\LimbGrabberCompat\CVRLimbsGrabber.csproj</_LimbGrabberCompatProject>
     <_LimbGrabberCompatOutputDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\obj\LimbGrabberCompat\$(Configuration)\$(TargetFramework)\'))</_LimbGrabberCompatOutputDir>
     <_LimbGrabberCompatAssembly>$(_LimbGrabberCompatOutputDir)CVRLimbsGrabber.dll</_LimbGrabberCompatAssembly>
