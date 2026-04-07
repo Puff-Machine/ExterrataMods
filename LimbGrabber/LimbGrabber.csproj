@@ -25,7 +25,7 @@
     <MSBuild Projects="$(_LimbGrabberCompatProject)"
              Targets="Build"
              BuildInParallel="false"
-             Properties="Configuration=$(Configuration);Platform=$(Platform);RECURSIVE_BUILD=true;CompatOutputPath=$(_LimbGrabberCompatOutputDir)" />
+             Properties="Configuration=$(Configuration);Platform=$(Platform);RECURSIVE_BUILD=true;InstallOnBuild=false;CompatOutputPath=$(_LimbGrabberCompatOutputDir)" />
 
     <ItemGroup>
       <EmbeddedResource Remove="$(_LimbGrabberCompatAssembly)" />

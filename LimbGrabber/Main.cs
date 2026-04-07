@@ -11,13 +11,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine.SceneManagement;
 
-[assembly: MelonGame(null, "ChilloutVR")]
-[assembly: MelonInfo(typeof(Koneko.LimbGrabber), Koneko.MyPluginInfo.PLUGIN_NAME, Koneko.MyPluginInfo.PLUGIN_VERSION, "Exterrata, Puff Machine")]
-[assembly: MelonAdditionalCredits("Khodrin")]
-//[assembly: MelonAdditionalDependencies("DesktopVRIK")]
-[assembly: MelonOptionalDependencies("PlayerRagdollMod")]
-[assembly: HarmonyDontPatchAll]
-
 namespace Koneko;
 
 public class LimbGrabber : MelonMod
