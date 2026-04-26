@@ -1,5 +1,6 @@
 <Project>
   <!-- Temporary hack: I don't have any Melons installed, this should be safe -->
+  <!-- It's no longer safe, I'll just build PlayerRagdollMod for MelonLoader
   <Target Name="ConfigureMelonLocalModSearchPaths"
           AfterTargets="ResolveCvrInstallPath"
           BeforeTargets="ResolveCvrModReferences"
@@ -10,4 +11,5 @@
       </CvrModReference>
     </ItemGroup>
   </Target>
+  -->
 </Project>
